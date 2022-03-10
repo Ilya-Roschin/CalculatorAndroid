@@ -1,5 +1,6 @@
 package com.university.calculator.app;
 
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     private static final CalculatorModel CALCULATOR_MODEL = new CalculatorModel();
 
     private TextView text;
+    private String textTemp;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -41,7 +43,21 @@ public class MainActivity extends AppCompatActivity {
         actionsIds.add(R.id.division);
         actionsIds.add(R.id.divisionWithRemainder);
         actionsIds.add(R.id.equals);
-        actionsIds.add(R.id.clean);
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            actionsIds.add(R.id.right_bracket);
+            actionsIds.add(R.id.left_bracket);
+            actionsIds.add(R.id.sin);
+            actionsIds.add(R.id.cos);
+            actionsIds.add(R.id.tg);
+            actionsIds.add(R.id.fact);
+            actionsIds.add(R.id.exp);
+            actionsIds.add(R.id.power);
+        }
+        actionsIds.add(R.id.back);
+        actionsIds.add(R.id.ac);
+
 
         text = findViewById(R.id.text);
 
@@ -58,4 +74,20 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+
+        outState.putString("textKey", text.getText().toString());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        text.setText(savedInstanceState.getString("textKey"));
+        CALCULATOR_MODEL.setInputString(new StringBuilder(savedInstanceState.getString("textKey")));
+    }
+
 }

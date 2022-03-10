@@ -1,12 +1,18 @@
 package com.university.calculator.app;
 
+import android.widget.Toast;
+
+import com.udojava.evalex.Expression;
+
+import java.math.BigDecimal;
+
 public class CalculatorModel {
 
-    StringBuilder inputString = new StringBuilder();
-    private static final CalculatorService CALCULATOR_SERVICE = new CalculatorService();
+    private StringBuilder inputString = new StringBuilder();
 
     public void onActionPressed(int actionId) {
-        if (inputString.length() < 20) {
+
+        if (inputString.length() < 30) {
             switch (actionId) {
                 case R.id.zero:
                     inputString.append("0");
@@ -38,7 +44,7 @@ public class CalculatorModel {
                 case R.id.nine:
                     inputString.append("9");
                     break;
-                case R.id.clean:
+                case R.id.back:
                     if (inputString.length() > 0) {
                         inputString.setLength(inputString.length() - 1);
                     }
@@ -66,8 +72,38 @@ public class CalculatorModel {
                 case R.id.equals:
                   findResult();
                     break;
+                case R.id.ac:
+                    inputString.delete(0,inputString.length());
+                    break;
+                case R.id.sin:
+                    inputString.append("SIN(");
+                    break;
+                case R.id.cos:
+                    inputString.append("COS(");
+                    break;
+                case R.id.tg:
+                    inputString.append("TAN(");
+                    break;
+                case R.id.fact:
+                    inputString.append("FACT(");
+                    break;
+                case R.id.power:
+                    inputString.append("^");
+                    break;
+                case R.id.pi:
+                    inputString.append("PI");
+                    break;
+                case R.id.right_bracket:
+                    inputString.append(")");
+                    break;
+                case R.id.left_bracket:
+                    inputString.append("(");
+                    break;
+                case R.id.exp:
+                    inputString.append("e");
+                    break;
             }
-        } else if (actionId == R.id.clean) {
+        } else if (actionId == R.id.back) {
             inputString.setLength(inputString.length() - 1);
         } else if (actionId == R.id.equals) {
           findResult();
@@ -79,12 +115,20 @@ public class CalculatorModel {
     }
 
     public void findResult() {
-        if (inputString.length() > 0) {
-            if(!CALCULATOR_SERVICE.isNumber(inputString)) {
-                double result = CALCULATOR_SERVICE.findAnswerFromRPN(CALCULATOR_SERVICE.expressionToRPN(inputString.toString()));
+        try {
+            if (inputString.length() > 0) {
+                Expression expression = new Expression(inputString.toString());
+                BigDecimal result = expression.eval();
                 inputString.delete(0, inputString.length())
                         .append(result);
             }
+
+        } catch (Exception e) {
+
         }
+    }
+
+    public void setInputString(StringBuilder inputString) {
+        this.inputString = inputString;
     }
 }
